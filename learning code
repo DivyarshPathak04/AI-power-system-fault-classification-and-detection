@@ -1,0 +1,139 @@
+clc;
+clear;
+close all;
+
+%% =====================================================
+% REALISTIC FAULT DATA GENERATION (PU SYSTEM)
+% Features: [Va Vb Vc Ia Ib Ic]
+% Labels:
+% 0 = Normal, 1 = LG, 2 = LL, 3 = LLG, 4 = LLL
+%% =====================================================
+
+numSamples = 350;        % Total samples
+X = zeros(numSamples,6);
+Y = zeros(numSamples,1);
+
+for i = 1:numSamples
+
+    % Randomly choose fault type
+    faultType = randi([0 4]);
+    Y(i) = faultType;
+
+    % -------- Normal operating values --------
+    Va = 1.0 + 0.01*randn;
+    Vb = 1.0 + 0.01*randn;
+    Vc = 1.0 + 0.01*randn;
+
+    Ia = 0.5 + 0.05*randn;
+    Ib = 0.5 + 0.05*randn;
+    Ic = 0.5 + 0.05*randn;
+
+    % -------- Fault behavior --------
+    switch faultType
+
+        case 1   % LG fault (random phase)
+            phase = randi([1 3]);
+            if phase == 1
+                Va = 0.6 + 0.05*randn;
+                Ia = 1.8 + 0.2*randn;
+            elseif phase == 2
+                Vb = 0.6 + 0.05*randn;
+                Ib = 1.8 + 0.2*randn;
+            else
+                Vc = 0.6 + 0.05*randn;
+                Ic = 1.8 + 0.2*randn;
+            end
+
+        case 2   % LL fault (A-B)
+            Va = 0.7 + 0.05*randn;
+            Vb = 0.7 + 0.05*randn;
+            Ia = 1.5 + 0.2*randn;
+            Ib = 1.5 + 0.2*randn;
+
+        case 3   % LLG fault (A-B-G)
+            Va = 0.65 + 0.05*randn;
+            Vb = 0.65 + 0.05*randn;
+            Ia = 1.6 + 0.2*randn;
+            Ib = 1.6 + 0.2*randn;
+            Ic = 0.8 + 0.1*randn;
+
+        case 4   % LLL fault
+            Va = 0.4 + 0.05*randn;
+            Vb = 0.4 + 0.05*randn;
+            Vc = 0.4 + 0.05*randn;
+            Ia = 2.5 + 0.3*randn;
+            Ib = 2.5 + 0.3*randn;
+            Ic = 2.5 + 0.3*randn;
+    end
+
+    % Store features
+    X(i,:) = [Va Vb Vc Ia Ib Ic];
+end
+
+%% =====================================================
+% DATA VISUALIZATION (OPTIONAL BUT IMPORTANT)
+%% =====================================================
+figure;
+scatter3(X(:,1), X(:,4), X(:,6), 25, Y, 'filled');
+xlabel('Va (pu)');
+ylabel('Ia (pu)');
+zlabel('Ic (pu)');
+title('Realistic Fault Data Distribution');
+colorbar;
+grid on;
+
+%% =====================================================
+% TRAIN–TEST SPLIT (NO STRATIFICATION ISSUE)
+%% =====================================================
+cv = cvpartition(numSamples,'HoldOut',0.3);
+
+Xtrain = X(training(cv),:);
+Ytrain = Y(training(cv));
+
+Xtest  = X(test(cv),:);
+Ytest  = Y(test(cv));
+
+%% =====================================================
+% AI MODEL: DECISION TREE
+%% =====================================================
+model = fitctree(Xtrain, Ytrain);
+
+%% =====================================================
+% PREDICTION & ACCURACY
+%% =====================================================
+Ypred = predict(model, Xtest);
+
+accuracy = mean(Ypred == Ytest)*100;
+fprintf('Classification Accuracy = %.2f %%\n', accuracy);
+
+%% =====================================================
+% CONFUSION MATRIX
+%% =====================================================
+figure;
+confusionchart(Ytest, Ypred);
+title('Fault Classification Confusion Matrix');
+
+%% =====================================================
+% DECISION TREE VISUALIZATION
+%% =====================================================
+figure;
+view(model,'Mode','graph');
+
+%% =====================================================
+% FAULT TYPE DISPLAY (SAMPLE OUTPUT)
+%% =====================================================
+disp('Sample Predictions:');
+for i = 1:10
+    switch Ypred(i)
+        case 0
+            disp('Normal Condition');
+        case 1
+            disp('LG Fault');
+        case 2
+            disp('LL Fault');
+        case 3
+            disp('LLG Fault');
+        case 4
+            disp('LLL Fault');
+    end
+end
