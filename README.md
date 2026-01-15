@@ -1,12 +1,14 @@
 # AI-Based Power System Fault Classification (MATLAB)
 
 ## Overview
-This repository contains MATLAB code for generating realistic power system fault data and classifying different fault types using Artificial Intelligence (Machine Learning).
+This repository contains MATLAB code created as part of my **self-learning process** to understand how Artificial Intelligence (Machine Learning) can be applied to power system fault analysis.
 
-The work is intended for **personal learning and skill development** in:
-- Power System Protection
-- MATLAB
-- AI applications in electrical engineering
+The implementation is based on **guided learning, experimentation, and adaptation** for personal understanding.
+
+## Objective
+- To study voltage and current behavior during different power system faults
+- To generate realistic synthetic fault data
+- To apply a machine learning classifier for fault identification
 
 ## Fault Types Considered
 - Normal Condition
@@ -16,28 +18,22 @@ The work is intended for **personal learning and skill development** in:
 - Three-Phase Fault (LLL)
 
 ## Features Used
-- RMS Phase Voltages: Va, Vb, Vc (per-unit)
-- RMS Phase Currents: Ia, Ib, Ic (per-unit)
+- RMS Phase Voltages (Va, Vb, Vc) in per-unit
+- RMS Phase Currents (Ia, Ib, Ic) in per-unit
 
-## AI Technique
-- Decision Tree Classifier (`fitctree` in MATLAB)
+## Methodology
+1. Realistic synthetic fault data is generated based on known power system behavior.
+2. Noise is added to simulate real measurement conditions.
+3. A Decision Tree classifier is trained using MATLAB.
+4. Model performance is evaluated using accuracy and confusion matrix.
 
-## How the Data is Generated
-Synthetic fault data is generated using realistic electrical behavior:
-- Voltage drops during faults
-- Current rises based on fault severity
-- Gaussian noise added to simulate real measurements
+## Tools Used
+- MATLAB
+- Statistics and Machine Learning Toolbox
 
-## How to Run
-1. Open MATLAB
-2. Run `fault_data_generation.m`
-3. Run `fault_classification_ai.m`
-4. View accuracy, confusion matrix, and decision tree
-
-## Learning Outcomes
-- Understanding fault signatures in power systems
-- Applying machine learning to classification problems
-- Interpreting AI decisions using decision trees
+## Purpose of This Repository
+This repository is intended **only for learning and skill development**.  
+It is not claimed to be an industry-grade or research-level system.
 
 ## Future Improvements
 - Random Forest classifier
@@ -46,4 +42,5 @@ Synthetic fault data is generated using realistic electrical behavior:
 - Simulink-based fault modeling
 
 ## Author
-Personal learning project by an Electrical & Electronics Engineering student.
+Electrical & Electronics Engineering student  
+(Self-learning repository)
